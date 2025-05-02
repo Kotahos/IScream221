@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace App\Router;
 
 use App\Controllers\AboutController;
@@ -13,6 +12,7 @@ use App\Services\UserDBStorage;
 
 class Router {
     public function route(string $url): string {
+        // Инициализация глобальных переменных
         global $user_id, $username, $avatar;
 
         if (isset($_SESSION['user_id'])) {
@@ -29,8 +29,8 @@ class Router {
 
         $path = parse_url($url, PHP_URL_PATH);
         $pieces = explode("/", $path);
-        //var_dump($pieces);
         $resource = $pieces[1];
+
         switch ($resource) {
             case "about":
                 $about = new AboutController();
@@ -45,6 +45,9 @@ class Router {
                 $registerController = new RegisterController();
                 $token = (isset($pieces[2])) ? $pieces[2] : null;
                 return $registerController->verify($token);
+            case "history":
+                $userController = new UserController();
+                return $userController->getOrdersHistory();
             case "login":
                 $userController = new UserController();
                 return $userController->get();
@@ -70,10 +73,11 @@ class Router {
                 $prevUrl = $_SERVER['HTTP_REFERER'];
                 header("Location: {$prevUrl}");                    
                 return "";
+
             case "profile":
                 $userController = new UserController();
-    
-                    // Проверяем метод запроса
+
+                // Проверяем метод запроса
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Если POST-запрос, обновляем данные профиля
                     $userController->updateProfile();
@@ -82,6 +86,7 @@ class Router {
                     return $userController->profile();
                 }
                 break;
+
             default:
                 $home = new HomeController();
                 return $home->get();

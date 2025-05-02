@@ -1,7 +1,7 @@
 <?php 
 namespace App\Services;
 
-use App\Configs\Config;
+use App\Config\Config;
 use App\Models\Order;
 
 class OrderFactory {

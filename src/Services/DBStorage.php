@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Services;
 
 use PDO;
-use App\Configs\Config;
+use App\Config\Config;
 
 class DBStorage 
 {

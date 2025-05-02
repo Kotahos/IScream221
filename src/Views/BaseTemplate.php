@@ -126,6 +126,7 @@ if ($user_id > 0) {
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/profile">Профиль</a></li>
+                            <li><a class="dropdown-item" href="/history">История заказов</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -133,6 +134,7 @@ if ($user_id > 0) {
                         </ul>
                     </li>
                 </ul>
+                
         HTML;
 } else {
     $template .= <<<HTML
@@ -159,7 +161,6 @@ if ($user_id > 0) {
             %s
             <footer class="mt-3 p-3">
                 <p>© 2025 «Кемеровский кооперативный техникум»</p>
-                <p>(*) Сайт разработан в рамках обучения в "Кузбасском кооперативном техникуме" по специальности "Специалист по информационным технологиям".</p>
             </footer>
         </body>
         </html>

@@ -3,7 +3,7 @@ namespace App\Services;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use App\Configs\Config;
+use App\Config\Config;
 
 class Mailer {
     //  временный емайл с https://tempail.com

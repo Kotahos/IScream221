@@ -49,7 +49,7 @@ class AboutTemplate extends BaseTemplate
             <!-- Блок с контактной информацией -->
             <section class="row mt-5 contact-section">
                 <div class="col-md-6 mx-auto">
-                    <h3 class="mb-4"><i class="fas fa-info-circle me-2"></i>Контактная информация</h3>
+                    <h3 class="mb-4"><i "></i>Контактная информация</h3>
                     <ul class="list-unstyled">
                         <li><i class="fas fa-map-marker-alt me-2"></i>Адрес: г. Кемерово, ул. Ленина, 123</li>
                         <li><i class="fas fa-phone me-2"></i>Телефон: +7 (999) 000 99 00</li>

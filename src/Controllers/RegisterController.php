@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Services\UserFactory;
 use App\Services\ValidateRegisterData;
 use App\Services\Mailer;
-use App\Configs\Config;
+use App\Config\Config;
 use App\Services\UserDBStorage;
 
 class RegisterController {

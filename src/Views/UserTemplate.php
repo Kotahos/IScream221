@@ -1,6 +1,7 @@
 <?php 
 namespace App\Views;
 
+use App\Config\Config;
 use App\Views\BaseTemplate;
 
 class UserTemplate extends BaseTemplate
@@ -194,6 +195,121 @@ class UserTemplate extends BaseTemplate
                                     <i class="bi bi-save me-2"></i>Сохранить изменения
                                 </button>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        HTML;
+    
+        $resultTemplate = sprintf($template, $title, $content);
+        return $resultTemplate;
+    }
+
+    public static function getHistoryTemplate(?array $data): string {
+        $template = parent::getTemplate();
+        $title = 'История заказов';
+    
+        // Если нет данных
+        if (!is_array($data) || empty($data)) {
+            $content = <<<EMPTY
+            <main class="container">
+                <div class="row justify-content-center align-items-center min-vh-100">
+                    <div class="col-md-8 col-lg-6 col-xl-5">
+                        <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+                            <div class="card-body p-5">
+                                <div class="text-center mb-4">
+                                    <h2 class="fw-bold mb-3" style="color: #d32f2f;">
+                                        <i class="bi bi-clock-history me-2"></i>История заказов
+                                    </h2>
+                                    <p class="text-muted">У вас пока нет заказов</p>
+                                </div>
+                                <div class="text-center">
+                                    <a href="/catalog" class="btn btn-danger py-2 px-4 fw-bold" 
+                                       style="border-radius: 8px; transition: all 0.3s ease;"
+                                       onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(211, 47, 47, 0.3)';"
+                                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                        <i class="bi bi-cart me-2"></i>Перейти в каталог
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            EMPTY;
+            return sprintf($template, $title, $content);
+        }
+    
+        $content = <<<HTML
+        <main class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card shadow-sm" style="border-radius: 15px; border: none;">
+                        <div class="card-body p-4">
+                            <div class="text-center mb-5">
+                                <h2 class="fw-bold" style="color: #d32f2f;">
+                                    <i class="bi bi-clock-history me-2"></i>История заказов
+                                </h2>
+                            </div>
+                            
+                            <div class="orders-list">
+        HTML;
+    
+        foreach ($data as $row) {
+            $orderDate = date("d.m.Y в H:i", strtotime($row['created']));
+            $nameStatus = Config::getStatusName($row['status']);
+            $colorStyle = Config::getStatusColor($row['status']);
+            $orderSum = number_format($row['all_sum'], 0, '', ' ');
+            
+            $content .= <<<HTML
+                                <div class="order-card mb-4 p-4" style="
+                                    border-radius: 12px;
+                                    background: #fff;
+                                    border-left: 4px solid #d32f2f;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                                    transition: all 0.3s ease;
+                                " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 16px rgba(0,0,0,0.12)';"
+                                  onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)';">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="fw-bold mb-0">Заказ #{$row['id']}</h5>
+                                        <span class="badge {$colorStyle} py-2 px-3" style="font-size: 0.9rem; border-radius: 8px;">{$nameStatus}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between text-muted mb-2">
+                                        <div>
+                                            <i class="bi bi-calendar me-2"></i>
+                                            <span>{$orderDate}</span>
+                                        </div>
+                                        <div>
+                                            <i class="bi bi-currency-ruble me-2"></i>
+                                            <span class="fw-semibold" style="color: #212529;">{$orderSum} ₽</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-end mt-3">
+                                        <a href="/order/{$row['id']}" class="btn btn-outline-danger btn-sm py-1 px-3" 
+                                           style="border-radius: 8px; font-size: 0.85rem; transition: all 0.2s ease;"
+                                           onmouseover="this.style.backgroundColor='#d32f2f'; this.style.color='white';"
+                                           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#d32f2f';">
+                                            Подробнее <i class="bi bi-chevron-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+            HTML;
+        }
+    
+        $content .= <<<HTML
+                            </div>
+                            
+                            <div class="text-center mt-4">
+                                <a href="/catalog" class="btn btn-outline-danger py-2 px-4 fw-bold" 
+                                   style="border-radius: 8px; transition: all 0.3s ease;"
+                                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(211, 47, 47, 0.1)';"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                                    <i class="bi bi-arrow-left me-2"></i>Вернуться в каталог
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

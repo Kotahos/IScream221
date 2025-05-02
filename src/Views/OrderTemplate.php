@@ -8,9 +8,17 @@ class OrderTemplate extends BaseTemplate
     /*
         Формирование страницы "Создание заказа"
     */
-    public static function getOrderTemplate(?array $products, float $all_sum): string {
+    public static function getOrderTemplate(?array $products, float $all_sum, array $userData = []): string {
         $template = parent::getTemplate();
         $title = 'Оформление заказа';
+
+        // Экранируем данные пользователя
+        $username = htmlspecialchars($userData['username'] ?? '');
+        $email = htmlspecialchars($userData['email'] ?? '');
+        $address = htmlspecialchars($userData['address'] ?? '');
+        $phone = htmlspecialchars($userData['phone'] ?? '');
+
+        // Основной контент страницы
         $content = <<<HTML
         <!DOCTYPE html>
         <html lang="ru">
@@ -113,7 +121,6 @@ class OrderTemplate extends BaseTemplate
         <body>
         <main class="order-container">
             <h1 class="mb-4"><i class="fas fa-shopping-cart me-2"></i>Оформление заказа</h1>
-            
             <div class="cart-section">
                 <div class="card mb-4">
                     <div class="cart-header">
@@ -121,41 +128,40 @@ class OrderTemplate extends BaseTemplate
                     </div>
                     <div class="card-body p-0">
         HTML;
-        
+
+        // Добавляем список товаров и информацию о сумме
         $content .= self::getProductList($products);
         $content .= self::getSummaryInfo($all_sum);
-        
+
         $content .= <<<HTML
                     </div>
                 </div>
             </div>
-            
             <div class="delivery-form">
                 <h3 class="mb-4"><i class="fas fa-truck me-2"></i>Данные для доставки</h3>
                 <form action="/order" method="POST">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="fioInput" class="form-label">ФИО *</label>
-                            <input type="text" name="fio" class="form-control" id="fioInput" required>
+                            <input type="text" name="fio" class="form-control" value="{$username}" id="fioInput" required>
                         </div>
                         <div class="col-md-6">
                             <label for="phoneInput" class="form-label">Телефон *</label>
-                            <input type="tel" name="phone" class="form-control" id="phoneInput" required>
+                            <input type="tel" name="phone" class="form-control" value="{$phone}" id="phoneInput" required>
                         </div>
                         <div class="col-12">
                             <label for="addressInput" class="form-label">Адрес доставки *</label>
-                            <input type="text" name="address" class="form-control" id="addressInput" required>
+                            <input type="text" name="address" class="form-control" value="{$address}" id="addressInput" required>
                         </div>
                         <div class="col-md-6">
                             <label for="emailInput" class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" id="emailInput">
+                            <input type="email" name="email" class="form-control" value="{$email}" id="emailInput">
                         </div>
                         <div class="col-md-6">
                             <label for="commentInput" class="form-label">Комментарий к заказу</label>
                             <input type="text" name="comment" class="form-control" id="commentInput">
                         </div>
                     </div>
-            
                     <div class="text-center mt-4">
                         <button type="submit" class="btn btn-checkout btn-lg">
                             <i class="fas fa-check-circle me-2"></i>Подтвердить заказ
@@ -164,25 +170,21 @@ class OrderTemplate extends BaseTemplate
                 </form>
             </div>
         </main>
-        
         <script>
             // Обработчики для кнопок изменения количества
             document.querySelectorAll('.quantity-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const input = this.parentNode.querySelector('.quantity-input');
                     let value = parseInt(input.value);
-                    
                     if (this.classList.contains('plus')) {
                         value++;
                     } else if (this.classList.contains('minus') && value > 1) {
                         value--;
                     }
-                    
                     input.value = value;
                     // Здесь можно добавить AJAX запрос для обновления количества на сервере
                 });
             });
-            
             // Обработчики для кнопок удаления
             document.querySelectorAll('.remove-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -195,8 +197,8 @@ class OrderTemplate extends BaseTemplate
         </html>
         HTML;
 
-        $resultTemplate = sprintf($template, $title, $content);
-        return $resultTemplate;
+        // Возвращаем готовый шаблон
+        return sprintf($template, $title, $content);
     }
 
     /*
@@ -245,6 +247,7 @@ class OrderTemplate extends BaseTemplate
                 </div>
             HTML;
         }
+
         return $content;
     }
 
@@ -253,7 +256,7 @@ class OrderTemplate extends BaseTemplate
     */
     public static function getSummaryInfo(float $all_sum): string {
         $all_sum_formatted = number_format($all_sum, 2, '.', ' ');
-        
+
         if ($all_sum == 0) {
             return '';
         }

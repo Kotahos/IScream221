@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 namespace App\Services;
 
 use PDO;
@@ -7,18 +8,21 @@ class OrderDBStorage extends DBStorage implements ISaveStorage
 {
     public function saveData(string $name, array $data): bool
     {
+        global $user_id;
         $sql = "INSERT INTO `orders`
-        (`fio`, `address`, `phone`, `email`, `all_sum`) 
-        VALUES (:fio, :address, :phone, :email, :sum)";
+        (`fio`, `address`, `phone`, `email`, `all_sum`, `user_id`, `status`) 
+        VALUES (:fio, :addres, :phone, :email, :sum, :idUser, 1 )";
 
         $sth = $this->connection->prepare($sql);
 
         $result= $sth->execute( [
             'fio' => $data['fio'],
-            'address' => $data['address'],
+            'addres' => $data['address'],
             'phone' => $data['phone'],
             'email' => $data['email'],
-            'sum' => $data['all_sum']
+            'sum' => $data['all_sum'],
+          
+            'idUser' => $user_id,
         ] );
 
         // получаем идентификатор добавленного заказа
@@ -33,29 +37,29 @@ class OrderDBStorage extends DBStorage implements ISaveStorage
     добавляет позиции заказа в таблицу order_item
     */
     public function saveItems(int $idOrder, array $products): bool 
-    {
-        foreach ($products as $product) {
-            $id = $product['id'];
-            $price = $product['price'];
-            $quantity = $product['quantity'];
-            $sum = $price * $quantity;
-            // SQL запрос на вставку данных в таблицу  order_item
-            $sql = "INSERT INTO `order_item`
-            (`order_id`, `product_id`, `count_item`, 
-            `price_item`, `sum_item`) 
-            VALUES 
-            (:id_order, :id_product, :count, :price, :sum)";
+{
+    foreach ($products as $product) {
+        $id = $product['id'];
+        $price = $product['price'];
+        $quantity = $product['quantity'];
+        $sum = $price * $quantity;
 
-            $sth = $this->connection->prepare($sql);
+        // Обрати внимание на исправление: УБРАНА ЗАПЯТАЯ ПОСЛЕ `sum_item`
+        $sql = "INSERT INTO `order_item`
+                (`order_id`, `product_id`, `count_item`, `price_item`, `sum_item`) 
+                VALUES 
+                (:id_order, :id_product, :count, :price, :sum)";
 
-            $sth->execute( [
-                'id_order' => $idOrder,
-                'id_product' => $id,
-                'count' => $quantity,
-                'price' => $price,
-                'sum' => $sum
-            ] );
-        }
-        return true;
+        $sth = $this->connection->prepare($sql);
+
+        $sth->execute([
+            'id_order' => $idOrder,
+            'id_product' => $id,
+            'count' => $quantity,
+            'price' => $price,
+            'sum' => $sum
+        ]);
     }
+    return true;
+}
 }

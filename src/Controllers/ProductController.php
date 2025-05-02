@@ -5,7 +5,7 @@ use App\Models\Product;
 use App\Views\ProductTemplate;
 use App\Services\FileStorage;
 use App\Services\ProductDBStorage;
-use App\Configs\Config;
+use App\Config\Config;
 
 class ProductController {
     public function get(?int $id): string {
