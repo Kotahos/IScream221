@@ -39,7 +39,7 @@ class OrderDataTest extends TestCase
     // телефон - 11 цифр, 7 либо 8 в начале
     public function testPhoneNotValidate(): void {
         $this->data['phone'] = "44-55-66";
-        $this->assertSame( true, 
+        $this->assertSame( false, 
                            $this->obj->validate($this->data) );
         $this->data['phone'] = "19004556677";
         $this->assertSame( false, 
